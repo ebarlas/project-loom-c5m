@@ -52,9 +52,13 @@ net.ipv4.tcp_rmem = 4096 87380 16777216
 net.ipv4.tcp_wmem = 4096 87380 16777216
 net.ipv4.tcp_mem = 1638400 1638400 1638400
 
-net.core.netdev_max_backlog = 65536
-net.core.optmem_max = 25165824
-net.ipv4.tcp_max_tw_buckets = 1440000
+net.netfilter.nf_conntrack_buckets = 1966050
+net.netfilter.nf_conntrack_max = 7864200
+
+#EC2 Amazon Linux
+#net.core.netdev_max_backlog = 65536
+#net.core.optmem_max = 25165824
+#net.ipv4.tcp_max_tw_buckets = 1440000
 ```
 
 `/etc/security/limits.conf`:
