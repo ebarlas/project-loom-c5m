@@ -176,7 +176,7 @@ COMMAND                                                                         
 
 ## EC2
 
-Two EC2 instances were used for bare metal tests:
+Two EC2 instances were used for cloud tests:
 
 * c5.2xlarge
 * 16GB RAM
