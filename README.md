@@ -14,7 +14,7 @@ The project consists of two simple components, `EchoServer` and `EchoClient`.
 For each active socket created, `EchoServer` receives bytes in and echoes them back out.
 
 `EchoClient` initiates many outgoing TCP connections to a range of ports on a single destination server.
-For each socket created, `EchoClient` sends a message to the server, awaits the responds, and going to sleep
+For each socket created, `EchoClient` sends a message to the server, awaits the response, and goes to sleep
 for a time before sending again.
 
 `EchoClient` terminates immediately if any of the follow occurs:
