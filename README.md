@@ -174,6 +174,25 @@ COMMAND                                                                         
 ./jdk-19/bin/java --enable-preview -ea -cp project-loom-scale-1.0.0-SNAPSHOT.jar loomtest.EchoClient 1012 06:16:30       37:12 19339 20.0 26370892 48553472
 ```
 
+---
+
+A dump of the Java platform threads confirmed expectations. 220 _total_ threads and 80 _carrier_ threads.
+
+As outlined in [JEP 425](https://openjdk.java.net/jeps/425), the number of carrier threads defaults 
+to [available processors](https://docs.oracle.com/en/java/javase/18/docs/api/java.base/java/lang/Runtime.html#availableProcessors()).
+
+The number of processors reports by the host is 80. 2 CPUs, 20 cores each, hyper-threading (2 threads each).
+
+```bash
+$ grep ^processor /proc/cpuinfo  | wc -l
+80
+$ ./jdk-19/bin/jstack 28226 > threads.txt
+$ grep tid= threads.txt | wc -l
+220
+$ grep tid= threads.txt | grep ForkJoin | wc -l
+80
+```
+
 ## EC2
 
 Two EC2 instances were used for cloud tests:
