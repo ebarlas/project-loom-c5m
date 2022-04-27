@@ -40,7 +40,7 @@ public class EchoServer {
             serverSocket.setOption(StandardSocketOptions.SO_REUSEPORT, true);
             while (true) {
                 Socket socket = serverSocket.accept();
-                connections.add(1);
+                connections.increment();
                 Thread.startVirtualThread(() -> handle(socket));
             }
         } catch (Exception e) {
@@ -59,12 +59,12 @@ public class EchoServer {
                     break;
                 }
                 out.write(buffer, 0, numBytes);
-                messages.add(1);
+                messages.increment();
             }
         } catch (Exception ignore) {
             // auto-close
         } finally {
-            connections.add(1);
+            connections.decrement();
         }
     }
 

@@ -46,7 +46,7 @@ public class EchoClient {
             Thread.sleep((int) (Math.random() * args.warmUp));
             s.connect(new InetSocketAddress(args.host, port), args.socketTimeout);
             s.setSoTimeout(args.socketTimeout);
-            connections.add(1);
+            connections.increment();
             ByteBuffer buffer = ByteBuffer.allocate(4);
             buffer.putInt(id);
             byte[] writeBuffer = buffer.array();
@@ -62,7 +62,7 @@ public class EchoClient {
                     offset += numBytes;
                 }
                 assert Arrays.equals(writeBuffer, readBuffer);
-                messages.add(1);
+                messages.increment();
                 Thread.sleep(args.sleep);
             }
         } catch (Exception e) {
