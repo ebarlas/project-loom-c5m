@@ -7,20 +7,20 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.LongAdder;
 
 public class EchoClient {
 
     final Args args;
-    final AtomicLong connections;
-    final AtomicLong messages;
+    final LongAdder connections;
+    final LongAdder messages;
     final AtomicReference<Exception> error;
 
     EchoClient(Args args) {
         this.args = args;
-        connections = new AtomicLong();
-        messages = new AtomicLong();
+        connections = new LongAdder();
+        messages = new LongAdder();
         error = new AtomicReference<>();
     }
 
@@ -35,7 +35,7 @@ public class EchoClient {
         long start = System.nanoTime();
         while (error.get() == null) {
             long elapsed = Duration.ofNanos(System.nanoTime() - start).toMillis();
-            System.out.printf("[%d] connections=%d, messages=%d\n", elapsed, connections.get(), messages.get());
+            System.out.printf("[%d] connections=%d, messages=%d\n", elapsed, connections.sum(), messages.sum());
             Thread.sleep(1_000);
         }
         error.get().printStackTrace();
@@ -46,7 +46,7 @@ public class EchoClient {
             Thread.sleep((int) (Math.random() * args.warmUp));
             s.connect(new InetSocketAddress(args.host, port), args.socketTimeout);
             s.setSoTimeout(args.socketTimeout);
-            connections.incrementAndGet();
+            connections.add(1);
             ByteBuffer buffer = ByteBuffer.allocate(4);
             buffer.putInt(id);
             byte[] writeBuffer = buffer.array();
@@ -62,7 +62,7 @@ public class EchoClient {
                     offset += numBytes;
                 }
                 assert Arrays.equals(writeBuffer, readBuffer);
-                messages.incrementAndGet();
+                messages.add(1);
                 Thread.sleep(args.sleep);
             }
         } catch (Exception e) {

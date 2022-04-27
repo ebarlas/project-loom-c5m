@@ -7,18 +7,18 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.StandardSocketOptions;
 import java.time.Duration;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 public class EchoServer {
 
     final Args args;
-    final AtomicLong connections;
-    final AtomicLong messages;
+    final LongAdder connections;
+    final LongAdder messages;
 
     EchoServer(Args args) {
         this.args = args;
-        connections = new AtomicLong();
-        messages = new AtomicLong();
+        connections = new LongAdder();
+        messages = new LongAdder();
     }
 
     void run() throws InterruptedException {
@@ -29,7 +29,7 @@ public class EchoServer {
         long start = System.nanoTime();
         while (true) {
             long elapsed = Duration.ofNanos(System.nanoTime() - start).toMillis();
-            System.out.printf("[%d] connections=%d, messages=%d\n", elapsed, connections.get(), messages.get());
+            System.out.printf("[%d] connections=%d, messages=%d\n", elapsed, connections.sum(), messages.sum());
             Thread.sleep(1_000);
         }
     }
@@ -40,7 +40,7 @@ public class EchoServer {
             serverSocket.setOption(StandardSocketOptions.SO_REUSEPORT, true);
             while (true) {
                 Socket socket = serverSocket.accept();
-                connections.incrementAndGet();
+                connections.add(1);
                 Thread.startVirtualThread(() -> handle(socket));
             }
         } catch (Exception e) {
@@ -59,12 +59,12 @@ public class EchoServer {
                     break;
                 }
                 out.write(buffer, 0, numBytes);
-                messages.incrementAndGet();
+                messages.add(1);
             }
         } catch (Exception ignore) {
             // auto-close
         } finally {
-            connections.decrementAndGet();
+            connections.add(1);
         }
     }
 
